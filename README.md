@@ -44,6 +44,12 @@ https://barbridge-democracy.onrender.com
 
 השרת תומך גם ב־`PORT` וב־`HOST` מהסביבה, כך שהוא מתאים לשירותי hosting סטנדרטיים.
 
+אם Render מציג `Exited with status 127 while running your code`, בדרך כלל המשמעות היא שאחת מפקודות ההרצה אינה קיימת בסביבה, או שהשירות נוצר עם runtime לא נכון. בפרויקט הזה הוגדרה עכשיו גם גרסת Python מפורשת (`3.11.11`) וגם פקודת הרצה תואמת:
+
+```bash
+python server.py
+```
+
 ## מבנה הפרויקט
 
 - `index.html` : מבנה האתר, לשוניות ותוכן הדף
