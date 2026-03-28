@@ -31,6 +31,10 @@ STATUSES_URL = "https://production.oknesset.org/pipelines/data/knesset/kns_statu
 DOCUMENT_BILLS_URL = (
     "https://production.oknesset.org/pipelines/data/bills/kns_documentbill/kns_documentbill.csv"
 )
+KNESSET_BILL_URL_TEMPLATE = (
+    "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawBill.aspx"
+    "?t=lawsuggestionssearch&lawitemid={bill_id}"
+)
 MAX_RESULTS = 60
 MIN_RISK_SCORE = 55
 CACHE_TTL_SECONDS = 900
@@ -333,6 +337,7 @@ def fetch_open_knesset_bills() -> List[Dict[str, object]]:
                 "nextStep": infer_next_step(status),
                 "riskNote": classification["riskNote"],
                 "tags": classification["tags"] + [tag for tag in [subtype] if tag],
+                "knessetUrl": build_knesset_bill_url(row.get("BillID")),
                 "backgroundMaterials": background_materials_by_bill.get(row.get("BillID"), []),
                 "isSpecialMemberBill": is_rothman_bill,
                 "isAttorneyGeneralStatusBill": is_attorney_general_bill,
@@ -389,6 +394,13 @@ def build_background_materials(document_rows: List[Dict[str, str]]) -> Dict[str,
     return materials_by_bill
 
 
+def build_knesset_bill_url(bill_id: Optional[str]) -> str:
+    cleaned_bill_id = str(bill_id or "").strip()
+    if not cleaned_bill_id.isdigit():
+        return ""
+    return KNESSET_BILL_URL_TEMPLATE.format(bill_id=cleaned_bill_id)
+
+
 def classify_bill(*, title: str, summary: str, committee_name: str, subtype: str, status: str) -> Optional[Dict[str, object]]:
     text = " ".join([title, summary, committee_name, subtype, status]).lower()
     matched_rules = []
@@ -409,7 +421,10 @@ def classify_bill(*, title: str, summary: str, committee_name: str, subtype: str
     score = min(99, score)
     primary_rule = max(matched_rules, key=lambda item: item.score)
     severity = "בינונית"
-    if score >= 85:
+    if primary_rule.name == "judiciary":
+        score = max(score, 85)
+        severity = "קיצונית"
+    elif score >= 85:
         severity = "קיצונית"
     elif score >= 68:
         severity = "גבוהה"
