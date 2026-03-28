@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>חקיקון | ניטור הצעות חוק אנטי-דמוקרטיות</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <nav class="topbar">
+          <div class="brand">
+            <div class="brand-mark">ח</div>
+            <div>
+              <p class="eyebrow">פלטפורמת ניטור סיכונים לדמוקרטיה</p>
+              <h1>חקיקון</h1>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <button id="refreshButton" class="ghost-button">רענון מהמקור</button>
+          </div>
+        </nav>
+
+        <section class="hero-content">
+          <div class="hero-copy">
+            <p class="section-kicker">מעקב ממוקד אחר איומים מוסדיים ואזרחיים</p>
+            <h2>אפליקציה לניטור הצעות חוק שעלולות לפגוע במשטר הדמוקרטי.</h2>
+            <p class="hero-text">
+              זהו מוקד בקרה להצעות חוק עם סיכון לפגיעה בעצמאות מוסדות, זכויות יסוד,
+              חופש הביטוי ומנגנוני הפיקוח. סננו לפי רמת סיכון, סוג הפגיעה ונהלו רשימת
+              מעקב אישית.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-button" href="#billList">למעבר לסיכונים הפעילים</a>
+              <button id="watchlistFocusButton" class="secondary-button">הצג איומים במעקב</button>
+            </div>
+          </div>
+
+          <div class="hero-panel">
+            <p class="panel-label">עדכון אחרון</p>
+            <h3 id="lastUpdatedLabel">טוען...</h3>
+            <div class="source-box">
+              <span id="sourceBadge" class="source-badge" data-kind="loading">טוען מקור...</span>
+              <p id="sourceHint" class="source-hint">המערכת תציג כאן מאיזה מקור הגיעו הנתונים.</p>
+            </div>
+            <div class="hero-stats">
+              <article class="stat-card">
+                <span>הצעות בסיכון</span>
+                <strong id="activeCount">0</strong>
+              </article>
+              <article class="stat-card">
+                <span>במעקב אישי</span>
+                <strong id="watchlistCount">0</strong>
+              </article>
+              <article class="stat-card">
+                <span>סיכון קיצוני</span>
+                <strong id="criticalCount">0</strong>
+              </article>
+            </div>
+          </div>
+        </section>
+      </header>
+
+      <main class="content-grid">
+        <aside class="sidebar">
+          <section class="sidebar-card">
+            <div class="card-header">
+              <p class="section-kicker">סינון וחיפוש</p>
+              <h3>בקרות ניטור</h3>
+            </div>
+
+            <label class="field">
+              <span>חיפוש חופשי</span>
+              <input id="searchInput" type="search" placeholder="שם הצעה, יוזם, מנגנון פגיעה" />
+            </label>
+
+            <label class="field">
+              <span>סטטוס</span>
+              <select id="statusFilter">
+                <option value="all">כל הסטטוסים</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>ועדה</span>
+              <select id="committeeFilter">
+                <option value="all">כל הוועדות</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>רמת סיכון דמוקרטי</span>
+              <select id="severityFilter">
+                <option value="all">כל הרמות</option>
+                <option value="קיצונית">קיצונית</option>
+                <option value="גבוהה">גבוהה</option>
+                <option value="בינונית">בינונית</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>סוג פגיעה</span>
+              <select id="harmFilter">
+                <option value="all">כל סוגי הפגיעה</option>
+              </select>
+            </label>
+
+            <label class="toggle-row">
+              <input id="specialMemberToggle" type="checkbox" />
+              <span>הצג רק הצעות של ח״כ שמחה רוטמן</span>
+            </label>
+
+            <label class="toggle-row">
+              <input id="attorneyGeneralToggle" type="checkbox" />
+              <span>הצג רק ״מעמד היועץ המשפטי לממשלה״</span>
+            </label>
+
+            <label class="toggle-row">
+              <input id="watchlistOnlyToggle" type="checkbox" />
+              <span>הצג רק הצעות במעקב אישי</span>
+            </label>
+          </section>
+
+          <section class="sidebar-card">
+            <div class="card-header">
+              <p class="section-kicker">הזנה ידנית</p>
+              <h3>הוספת הצעת חוק</h3>
+            </div>
+
+            <form id="manualBillForm" class="manual-form">
+              <label class="field">
+                <span>שם ההצעה</span>
+                <input id="manualTitle" name="title" type="text" required placeholder="למשל: הצעת חוק..." />
+              </label>
+
+              <label class="field">
+                <span>הסבר קצר</span>
+                <textarea
+                  id="manualSummary"
+                  name="summary"
+                  rows="3"
+                  required
+                  placeholder="מה ההצעה עושה ולמה היא בעייתית"
+                ></textarea>
+              </label>
+
+              <label class="field">
+                <span>יוזם</span>
+                <input id="manualSponsor" name="sponsor" type="text" placeholder='ח"כ / משרד / הזנה ידנית' />
+              </label>
+
+              <label class="field">
+                <span>ועדה</span>
+                <input id="manualCommittee" name="committee" type="text" placeholder="ועדת החוקה / לא שויך" />
+              </label>
+
+              <label class="field">
+                <span>סטטוס</span>
+                <input id="manualStatus" name="status" type="text" placeholder="קריאה ראשונה / דיון בוועדה" />
+              </label>
+
+              <label class="field">
+                <span>רמת סיכון</span>
+                <select id="manualSeverity" name="severity">
+                  <option value="קיצונית">קיצונית</option>
+                  <option value="גבוהה" selected>גבוהה</option>
+                  <option value="בינונית">בינונית</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>מוקד פגיעה</span>
+                <input id="manualHarmArea" name="harmArea" type="text" required placeholder="פגיעה בחופש הביטוי / בעצמאות הרשות השופטת" />
+              </label>
+
+              <label class="field">
+                <span>למה זה פוגע בדמוקרטיה</span>
+                <textarea
+                  id="manualRiskNote"
+                  name="riskNote"
+                  rows="3"
+                  required
+                  placeholder="נימוק קצר שיופיע בכרטיס"
+                ></textarea>
+              </label>
+
+              <label class="field">
+                <span>תגיות</span>
+                <input id="manualTags" name="tags" type="text" placeholder="פסיקים בין תגיות, למשל: משפט, זכויות אדם" />
+              </label>
+
+              <label class="field">
+                <span>קישור להצעת החוק באתר הכנסת</span>
+                <input
+                  id="manualKnessetUrl"
+                  name="knessetUrl"
+                  type="url"
+                  placeholder="https://main.knesset.gov.il/..."
+                />
+              </label>
+
+              <div class="manual-actions">
+                <button class="primary-button manual-submit" type="submit">הוסף לסיכונים</button>
+                <p id="manualFormMessage" class="manual-form-message" aria-live="polite"></p>
+              </div>
+            </form>
+          </section>
+
+          <section class="sidebar-card">
+            <div class="card-header">
+              <p class="section-kicker">תמונת מצב</p>
+              <h3>מדדים מרכזיים</h3>
+            </div>
+            <div id="metricsGrid" class="metrics-grid"></div>
+          </section>
+
+          <section class="sidebar-card">
+            <div class="card-header">
+              <p class="section-kicker">פיד פעילות</p>
+              <h3>שינויים בסיכון</h3>
+            </div>
+            <div id="activityFeed" class="activity-feed"></div>
+          </section>
+        </aside>
+
+        <section class="main-panel">
+          <div class="list-header">
+            <div>
+              <p class="section-kicker">מרכז בקרה דמוקרטי</p>
+              <h3 id="billList">הצעות חוק עם פוטנציאל פגיעה</h3>
+            </div>
+            <p id="resultsSummary" class="results-summary"></p>
+          </div>
+
+          <div id="billGrid" class="bill-grid"></div>
+        </section>
+      </main>
+    </div>
+
+    <template id="billCardTemplate">
+      <article class="bill-card">
+        <div class="bill-card-top">
+          <div class="bill-meta">
+            <span class="status-pill"></span>
+            <span class="priority-pill"></span>
+            <span class="manual-pill"></span>
+            <span class="focus-pill"></span>
+          </div>
+          <button class="watch-button" type="button"></button>
+        </div>
+
+        <h4 class="bill-title"></h4>
+        <p class="bill-summary"></p>
+
+        <dl class="bill-details">
+          <div>
+            <dt>יוזם</dt>
+            <dd class="bill-sponsor"></dd>
+          </div>
+          <div>
+            <dt>ועדה</dt>
+            <dd class="bill-committee"></dd>
+          </div>
+          <div>
+            <dt>עדכון</dt>
+            <dd class="bill-updated"></dd>
+          </div>
+          <div>
+            <dt>שלב הבא</dt>
+            <dd class="bill-next-step"></dd>
+          </div>
+          <div>
+            <dt>מוקד פגיעה</dt>
+            <dd class="bill-harm-area"></dd>
+          </div>
+          <div>
+            <dt>ציון סיכון</dt>
+            <dd class="bill-risk-score"></dd>
+          </div>
+        </dl>
+
+        <div class="risk-note"></div>
+        <div class="background-materials">
+          <p class="materials-title">חומר רקע</p>
+          <div class="materials-list"></div>
+        </div>
+        <div class="bill-links">
+          <a class="knesset-link" target="_blank" rel="noreferrer noopener"></a>
+        </div>
+        <div class="bill-ops">
+          <p class="materials-title">ניהול ידני להצעה</p>
+          <label class="field compact-field">
+            <span>ארגונים אזרחיים פעילים</span>
+            <textarea class="bill-civil-orgs" rows="2" placeholder="למשל: האגודה לזכויות האזרח, קרן..." ></textarea>
+          </label>
+          <label class="field compact-field">
+            <span>מנהל משימות</span>
+            <input class="bill-task-manager" type="text" placeholder="שם אחראי / קישור לכלי ניהול" />
+          </label>
+          <div class="bill-ops-actions">
+            <button class="ghost-button bill-ops-save" type="button">שמור נתונים ידניים</button>
+            <p class="bill-ops-message" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="bill-tags"></div>
+      </article>
+    </template>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
