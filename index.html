@@ -253,7 +253,11 @@
             <span class="manual-pill"></span>
             <span class="focus-pill"></span>
           </div>
-          <button class="watch-button" type="button"></button>
+          <div class="bill-actions">
+            <button class="watch-button" type="button"></button>
+            <button class="share-button" type="button">העתק לינק</button>
+            <button class="remove-button" type="button">הסר</button>
+          </div>
         </div>
 
         <h4 class="bill-title"></h4>
@@ -287,28 +291,37 @@
         </dl>
 
         <div class="risk-note"></div>
-        <div class="background-materials">
+        <section class="card-section background-materials">
           <p class="materials-title">חומר רקע</p>
           <div class="materials-list"></div>
-        </div>
-        <div class="bill-links">
-          <a class="knesset-link" target="_blank" rel="noreferrer noopener"></a>
-        </div>
-        <div class="bill-ops">
-          <p class="materials-title">ניהול ידני להצעה</p>
-          <label class="field compact-field">
-            <span>ארגונים אזרחיים פעילים</span>
-            <textarea class="bill-civil-orgs" rows="2" placeholder="למשל: האגודה לזכויות האזרח, קרן..." ></textarea>
-          </label>
-          <label class="field compact-field">
-            <span>מנהל משימות</span>
-            <input class="bill-task-manager" type="text" placeholder="שם אחראי / קישור לכלי ניהול" />
-          </label>
-          <div class="bill-ops-actions">
-            <button class="ghost-button bill-ops-save" type="button">שמור נתונים ידניים</button>
-            <p class="bill-ops-message" aria-live="polite"></p>
+        </section>
+        <section class="card-section bill-links">
+          <p class="materials-title">קישורים</p>
+          <div class="bill-links-list">
+            <a class="knesset-link" target="_blank" rel="noreferrer noopener"></a>
           </div>
-        </div>
+        </section>
+        <details class="bill-ops">
+          <summary class="bill-ops-summary">ניהול ידני להצעה</summary>
+          <div class="bill-ops-body">
+            <label class="field compact-field">
+              <span>סטטוס ידני</span>
+              <input class="bill-manual-status" type="text" placeholder="למשל: הכנה לקריאה ראשונה" />
+            </label>
+            <label class="field compact-field">
+              <span>ארגונים אזרחיים פעילים</span>
+              <textarea class="bill-civil-orgs" rows="2" placeholder="למשל: האגודה לזכויות האזרח, קרן..."></textarea>
+            </label>
+            <label class="field compact-field">
+              <span>מנהל משימות</span>
+              <input class="bill-task-manager" type="text" placeholder="שם אחראי / קישור לכלי ניהול" />
+            </label>
+            <div class="bill-ops-actions">
+              <button class="ghost-button bill-ops-save" type="button">שמור נתונים ידניים</button>
+              <p class="bill-ops-message" aria-live="polite"></p>
+            </div>
+          </div>
+        </details>
         <div class="bill-tags"></div>
       </article>
     </template>

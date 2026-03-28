@@ -91,11 +91,20 @@ body::before {
 .bill-card-top,
 .toggle-row,
 .hero-actions,
-.topbar-actions {
+.topbar-actions,
+.bill-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+.bill-card-top {
+  align-items: flex-start;
+}
+
+.bill-meta {
+  flex: 1 1 auto;
 }
 
 .topbar-actions {
@@ -421,12 +430,15 @@ textarea {
 .bill-grid {
   margin-top: 20px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: stretch;
 }
 
 .bill-card {
   padding: 20px;
   display: grid;
   gap: 16px;
+  height: 100%;
+  align-content: start;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
@@ -440,6 +452,7 @@ textarea {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  min-width: 0;
 }
 
 .status-pill,
@@ -450,10 +463,17 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 999px;
-  padding: 7px 10px;
+  max-width: 100%;
+  min-height: 44px;
+  padding: 9px 14px;
+  border-radius: 22px;
   font-size: 0.8rem;
   font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .status-pill {
@@ -505,14 +525,44 @@ textarea {
   color: var(--primary);
 }
 
+.bill-actions {
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.remove-button {
+  min-width: 72px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(182, 58, 50, 0.1);
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.share-button {
+  min-width: 102px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(47, 108, 104, 0.12);
+  color: var(--secondary);
+  font-weight: 700;
+}
+
 .bill-title {
   font-size: 1.2rem;
   line-height: 1.3;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .bill-summary {
   color: var(--muted);
   line-height: 1.7;
+  min-height: 5.2em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .bill-details {
@@ -525,6 +575,8 @@ textarea {
 .bill-details dd {
   margin: 6px 0 0;
   font-weight: 600;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .tag-pill {
@@ -532,25 +584,40 @@ textarea {
   color: var(--text);
 }
 
+.card-section,
 .background-materials {
   display: grid;
   gap: 10px;
+  align-content: start;
 }
 
 .bill-links {
-  display: grid;
+  padding-top: 2px;
+}
+
+.bill-links-list,
+.materials-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .knesset-link {
   display: none;
   width: fit-content;
+  max-width: 100%;
   text-decoration: none;
   padding: 9px 12px;
-  border-radius: 999px;
+  border-radius: 18px;
   background: rgba(185, 82, 44, 0.12);
   color: var(--primary);
   font-size: 0.9rem;
   font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .knesset-link.is-visible {
@@ -562,21 +629,21 @@ textarea {
   font-weight: 700;
 }
 
-.materials-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
 .material-link,
 .material-empty {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  max-width: 100%;
   padding: 8px 10px;
-  border-radius: 999px;
+  border-radius: 18px;
   font-size: 0.85rem;
   text-decoration: none;
+  line-height: 1.4;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .material-link {
@@ -592,9 +659,12 @@ textarea {
 .risk-note {
   line-height: 1.7;
   padding: 12px 14px;
+  min-height: 7.4em;
   border-radius: 14px;
   background: rgba(182, 58, 50, 0.08);
   border: 1px solid rgba(182, 58, 50, 0.12);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .empty-state {
@@ -608,6 +678,72 @@ textarea {
 .manual-form {
   display: grid;
   gap: 2px;
+}
+
+.bill-ops {
+  border: 1px solid rgba(23, 49, 62, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.52);
+  overflow: hidden;
+}
+
+.bill-ops-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bill-ops-summary::-webkit-details-marker {
+  display: none;
+}
+
+.bill-ops-summary::after {
+  content: "פתח";
+  font-size: 0.84rem;
+  color: var(--primary);
+}
+
+.bill-ops[open] .bill-ops-summary::after {
+  content: "סגור";
+}
+
+.bill-ops-body {
+  display: grid;
+  gap: 10px;
+  padding: 0 16px 16px;
+}
+
+.compact-field {
+  margin-bottom: 0;
+}
+
+.bill-ops .field span {
+  font-size: 0.9rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.bill-ops textarea,
+.bill-ops input {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.bill-ops-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.bill-ops-message {
+  min-height: 1.2em;
+  color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .manual-actions {
@@ -625,24 +761,6 @@ textarea {
   min-height: 20px;
   color: var(--muted);
   font-size: 0.9rem;
-}
-
-.bill-ops {
-  display: grid;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 16px;
-  background: rgba(23, 49, 62, 0.05);
-  border: 1px solid rgba(23, 49, 62, 0.08);
-}
-
-.compact-field {
-  margin-bottom: 0;
-}
-
-.bill-ops-actions {
-  display: grid;
-  gap: 8px;
 }
 
 .bill-ops-save {

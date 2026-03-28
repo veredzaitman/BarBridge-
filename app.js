@@ -1,11 +1,13 @@
 const STORAGE_KEY = "law-monitor-watchlist";
 const MANUAL_BILLS_STORAGE_KEY = "law-monitor-manual-bills";
 const BILL_METADATA_STORAGE_KEY = "law-monitor-bill-metadata";
+const HIDDEN_BILLS_STORAGE_KEY = "law-monitor-hidden-bills";
 
 const state = {
   bills: [],
   manualBills: loadManualBills(),
   billMetadata: loadBillMetadata(),
+  hiddenBills: loadHiddenBills(),
   watchlist: loadWatchlist(),
   filters: {
     query: "",
@@ -160,7 +162,7 @@ async function loadBills() {
 
 function populateFilters() {
   refillSelect(elements.statusFilter, "כל הסטטוסים", [
-    ...new Set(state.bills.map((bill) => bill.monitoringStage || bill.status).filter(Boolean)),
+    ...new Set(state.bills.map((bill) => getEffectiveStatus(bill)).filter(Boolean)),
   ]);
   refillSelect(elements.committeeFilter, "כל הוועדות", [
     ...new Set(state.bills.map((bill) => bill.committee).filter(Boolean)),
@@ -259,11 +261,11 @@ function renderMetrics() {
   const metrics = [
     {
       label: "הכנה לראשונה",
-      value: state.bills.filter((bill) => bill.monitoringStage === "הכנה לקריאה ראשונה").length,
+      value: state.bills.filter((bill) => getEffectiveStatus(bill) === "הכנה לקריאה ראשונה").length,
     },
     {
       label: "הכנה לשנייה ושלישית",
-      value: state.bills.filter((bill) => bill.monitoringStage === "הכנה לקריאה שנייה ושלישית").length,
+      value: state.bills.filter((bill) => getEffectiveStatus(bill) === "הכנה לקריאה שנייה ושלישית").length,
     },
     {
       label: "סיכון קיצוני",
@@ -306,7 +308,7 @@ function renderActivityFeed() {
     item.className = "activity-item";
     item.innerHTML = `
       <strong>${bill.title}</strong>
-      <p>${bill.monitoringStage || bill.status} • ${formatDate(bill.updatedAt)}</p>
+      <p>${getEffectiveStatus(bill)} • ${formatDate(bill.updatedAt)}</p>
       <p>${bill.harmArea}</p>
     `;
     elements.activityFeed.append(item);
@@ -370,8 +372,7 @@ function getFilteredBills() {
         .includes(state.filters.query);
 
     const matchesStatus =
-      state.filters.status === "all" ||
-      (bill.monitoringStage || bill.status) === state.filters.status;
+      state.filters.status === "all" || getEffectiveStatus(bill) === state.filters.status;
     const matchesCommittee =
       state.filters.committee === "all" || bill.committee === state.filters.committee;
     const matchesSeverity =
@@ -405,14 +406,22 @@ function createBillCard(bill) {
   const manualPill = template.querySelector(".manual-pill");
   const focusPill = template.querySelector(".focus-pill");
   const watchButton = template.querySelector(".watch-button");
+  const shareButton = template.querySelector(".share-button");
+  const removeButton = template.querySelector(".remove-button");
+  const billLinks = template.querySelector(".bill-links");
+  const billLinksList = template.querySelector(".bill-links-list");
   const knessetLink = template.querySelector(".knesset-link");
   const civilOrgsField = template.querySelector(".bill-civil-orgs");
+  const manualStatusField = template.querySelector(".bill-manual-status");
   const taskManagerField = template.querySelector(".bill-task-manager");
   const saveOpsButton = template.querySelector(".bill-ops-save");
   const opsMessage = template.querySelector(".bill-ops-message");
   const existingMetadata = state.billMetadata[bill.id] || {};
 
-  statusPill.textContent = bill.monitoringStage || bill.status;
+  const article = template.querySelector(".bill-card");
+  article.id = getBillAnchorId(bill.id);
+
+  statusPill.textContent = getEffectiveStatus(bill);
   priorityPill.textContent = `סיכון ${bill.severity}`;
   if (bill.severity === "גבוהה") {
     priorityPill.classList.add("priority-high");
@@ -445,10 +454,16 @@ function createBillCard(bill) {
   template.querySelector(".bill-harm-area").textContent = bill.harmArea;
   template.querySelector(".bill-risk-score").textContent = `${bill.riskScore}/100`;
   template.querySelector(".risk-note").textContent = bill.riskNote;
+  manualStatusField.value = existingMetadata.manualStatus || "";
   if (bill.knessetUrl) {
     knessetLink.href = bill.knessetUrl;
     knessetLink.textContent = "לצפייה בהצעת החוק באתר הכנסת";
     knessetLink.classList.add("is-visible");
+  } else {
+    const emptyLink = document.createElement("span");
+    emptyLink.className = "material-empty";
+    emptyLink.textContent = "לא נמצא קישור ישיר";
+    billLinksList.append(emptyLink);
   }
   civilOrgsField.value = existingMetadata.civilOrgs || "";
   taskManagerField.value = existingMetadata.taskManager || "";
@@ -487,12 +502,28 @@ function createBillCard(bill) {
     renderBills();
   });
 
+  shareButton.addEventListener("click", async () => {
+    const shareUrl = getBillShareUrl(bill.id);
+    const copied = await copyText(shareUrl);
+    shareButton.textContent = copied ? "הלינק הועתק" : "העתקה נכשלה";
+    window.setTimeout(() => {
+      shareButton.textContent = "העתק לינק";
+    }, 1800);
+  });
+
+  removeButton.addEventListener("click", () => {
+    removeBill(bill);
+  });
+
   saveOpsButton.addEventListener("click", () => {
     state.billMetadata[bill.id] = {
+      manualStatus: manualStatusField.value.trim(),
       civilOrgs: civilOrgsField.value.trim(),
       taskManager: taskManagerField.value.trim(),
     };
     saveBillMetadata();
+    populateFilters();
+    render();
     opsMessage.textContent = "הנתונים נשמרו להצעת החוק.";
   });
 
@@ -554,6 +585,19 @@ function saveBillMetadata() {
   window.localStorage.setItem(BILL_METADATA_STORAGE_KEY, JSON.stringify(state.billMetadata));
 }
 
+function loadHiddenBills() {
+  try {
+    const raw = window.localStorage.getItem(HIDDEN_BILLS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveHiddenBills() {
+  window.localStorage.setItem(HIDDEN_BILLS_STORAGE_KEY, JSON.stringify(state.hiddenBills));
+}
+
 function mergeBills(remoteBills, manualBills) {
   const merged = [...manualBills];
   const seenIds = new Set(manualBills.map((bill) => bill.id));
@@ -563,7 +607,68 @@ function mergeBills(remoteBills, manualBills) {
     }
     merged.push(bill);
   });
-  return merged;
+  return merged.filter((bill) => !state.hiddenBills.includes(bill.id));
+}
+
+function getEffectiveStatus(bill) {
+  const manualStatus = state.billMetadata?.[bill.id]?.manualStatus?.trim();
+  return manualStatus || bill.monitoringStage || bill.status || "לא זמין";
+}
+
+function getBillAnchorId(billId) {
+  return `bill-${String(billId).replace(/[^a-zA-Z0-9_-]+/g, "-")}`;
+}
+
+function getBillShareUrl(billId) {
+  return `${window.location.origin}${window.location.pathname}#${getBillAnchorId(billId)}`;
+}
+
+async function copyText(value) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(value);
+      return true;
+    }
+  } catch {
+  }
+
+  try {
+    const helper = document.createElement("textarea");
+    helper.value = value;
+    helper.setAttribute("readonly", "");
+    helper.style.position = "absolute";
+    helper.style.left = "-9999px";
+    document.body.append(helper);
+    helper.select();
+    const copied = document.execCommand("copy");
+    helper.remove();
+    return copied;
+  } catch {
+    return false;
+  }
+}
+
+function removeBill(bill) {
+  const shouldRemove = window.confirm(`להסיר את "${bill.title}" מהרשימה?`);
+  if (!shouldRemove) {
+    return;
+  }
+
+  if (bill.isManual) {
+    state.manualBills = state.manualBills.filter((item) => item.id !== bill.id);
+    saveManualBills();
+  }
+
+  if (!state.hiddenBills.includes(bill.id)) {
+    state.hiddenBills = [...state.hiddenBills, bill.id];
+    saveHiddenBills();
+  }
+
+  state.watchlist = state.watchlist.filter((id) => id !== bill.id);
+  saveWatchlist();
+  state.bills = mergeBills(state.bills.filter((item) => item.id !== bill.id), state.manualBills);
+  populateFilters();
+  render();
 }
 
 function parseTags(rawValue) {
