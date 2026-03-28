@@ -1,10 +1,7 @@
 services:
   - type: web
     name: barbridge-democracy
-    runtime: python
+    runtime: static
     plan: free
     buildCommand: ""
-    startCommand: python server.py
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.11
+    staticPublishPath: .

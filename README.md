@@ -9,7 +9,7 @@
 - פירוט צעדי שחיקה דמוקרטית בכל מדינה
 - לשונית נפרדת של ארגוני עורכי דין, שופטים ותובעים שפעלו נגד פגיעה בשלטון החוק
 
-האתר נבנה כאתר סטטי קל משקל עם שרת Python מינימלי להגשה, כך שאפשר להריץ אותו מקומית או לפרוס אותו בקלות לשירות hosting.
+האתר נבנה כאתר סטטי קל משקל. אפשר לפתוח אותו ישירות כקובץ מקומי, להריץ אותו עם שרת Python פשוט, או לפרוס אותו כ-Static Site ב-Render.
 
 ## הרצה מקומית
 
@@ -30,11 +30,16 @@ python3 server.py
 1. מעלים את הפרויקט ל־GitHub.
 2. יוצרים ב־Render שירות חדש מסוג `Web Service`.
 3. מחברים את מאגר ה־GitHub.
-4. Render יזהה את הקובץ `render.yaml` ויפרוס את האתר עם:
+4. יוצרים ב-Render שירות חדש מסוג `Static Site`.
+5. בוחרים את ה-repository.
+6. מגדירים:
 
-```bash
-python3 server.py
+```text
+Build Command: (leave empty)
+Publish Directory: .
 ```
+
+אם אתה פורס דרך Blueprint, Render יכול לקרוא את [render.yaml](/Users/veredzaitman/Documents/New%20project/render.yaml#L1), שבו האתר מוגדר עכשיו כ-`runtime: static`.
 
 בסיום הפריסה יתקבל קישור ציבורי בסגנון:
 
@@ -42,13 +47,7 @@ python3 server.py
 https://barbridge-democracy.onrender.com
 ```
 
-השרת תומך גם ב־`PORT` וב־`HOST` מהסביבה, כך שהוא מתאים לשירותי hosting סטנדרטיים.
-
-אם Render מציג `Exited with status 127 while running your code`, בדרך כלל המשמעות היא שאחת מפקודות ההרצה אינה קיימת בסביבה, או שהשירות נוצר עם runtime לא נכון. בפרויקט הזה הוגדרה עכשיו גם גרסת Python מפורשת (`3.11.11`) וגם פקודת הרצה תואמת:
-
-```bash
-python server.py
-```
+אם Render מציג `Exited with status 127 while running your code`, זה מתאים למצב שבו השירות נוצר כ-`Web Service` ומנסה להריץ פקודת start, למרות שהפרויקט עצמו הוא אתר סטטי. לכן הפתרון הנכון כאן הוא ליצור `Static Site` חדש, לא להמשיך לנסות להרים את אותו Web Service.
 
 ## מבנה הפרויקט
 
