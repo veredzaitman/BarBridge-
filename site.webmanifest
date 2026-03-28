@@ -1,0 +1,11 @@
+{
+  "name": "BarBridge Democracy",
+  "short_name": "BarBridge",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#12334a",
+  "description": "מאגר לשכות עורכי דין, ארגוני עורכי דין וארגוני שופטים מול נסיגה דמוקרטית."
+}

@@ -3,11 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>חקיקון | ניטור הצעות חוק אנטי-דמוקרטיות</title>
+    <title>BarBridge Democracy | לשכות עורכי דין מול נסיגה דמוקרטית</title>
+    <meta
+      name="description"
+      content="BarBridge Democracy הוא אתר שמרכז לשכות עורכי דין, ארגוני עורכי דין וארגוני שופטים במדינות עם נסיגה דמוקרטית, כולל פרטי קשר, הנהגה, מקורות ומכתבי פנייה."
+    />
+    <meta name="theme-color" content="#12334a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BarBridge Democracy" />
+    <meta
+      property="og:description"
+      content="מאגר אינטרנטי על לשכות עורכי דין וארגוני משפט מול נסיגה דמוקרטית."
+    />
+    <meta property="og:locale" content="he_IL" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="robots" href="./robots.txt" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=Manrope:wght@500;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
@@ -15,314 +30,235 @@
   <body>
     <div class="page-shell">
       <header class="hero">
-        <nav class="topbar">
-          <div class="brand">
-            <div class="brand-mark">ח</div>
-            <div>
-              <p class="eyebrow">פלטפורמת ניטור סיכונים לדמוקרטיה</p>
-              <h1>חקיקון</h1>
-            </div>
+        <div class="hero-copy">
+          <p class="eyebrow">שיתופי פעולה בין לשכות עורכי דין להגנת הדמוקרטיה</p>
+          <h1>BarBridge Democracy</h1>
+          <p class="hero-text">
+            אפליקציה מחקרית חדשה מאפס שמרכזת מדינות עם נסיגה דמוקרטית מתועדת, את פרטי
+            לשכות עורכי הדין הרלוונטיות, שמות ראשי הלשכה העדכניים, ונוסח פנייה רשמי
+            באנגלית המזמין שיתוף פעולה עם לשכת עורכי הדין בישראל.
+          </p>
+          <div class="hero-note">
+            <strong>הערת מתודולוגיה:</strong>
+            הרשימה באפליקציה היא מאגר פתיחה אוצר, לא רשימה ממצה של כל העולם. הבחירה
+            מבוססת על מדינות עם שחיקה דמוקרטית מתועדת במקורות עדכניים ונגישות יחסית
+            לנתוני לשכת עורכי הדין והנהגתה.
           </div>
-          <div class="topbar-actions">
-            <button id="refreshButton" class="ghost-button">רענון מהמקור</button>
-          </div>
-        </nav>
+        </div>
 
-        <section class="hero-content">
-          <div class="hero-copy">
-            <p class="section-kicker">מעקב ממוקד אחר איומים מוסדיים ואזרחיים</p>
-            <h2>אפליקציה לניטור הצעות חוק שעלולות לפגוע במשטר הדמוקרטי.</h2>
-            <p class="hero-text">
-              זהו מוקד בקרה להצעות חוק עם סיכון לפגיעה בעצמאות מוסדות, זכויות יסוד,
-              חופש הביטוי ומנגנוני הפיקוח. סננו לפי רמת סיכון, סוג הפגיעה ונהלו רשימת
-              מעקב אישית.
-            </p>
-            <div class="hero-actions">
-              <a class="primary-button" href="#billList">למעבר לסיכונים הפעילים</a>
-              <button id="watchlistFocusButton" class="secondary-button">הצג איומים במעקב</button>
+        <div class="hero-panel">
+          <p class="panel-label">עדכון נתונים</p>
+          <h2 id="updatedDate">28 במרץ 2026</h2>
+          <div class="hero-stats">
+            <div class="stat-card">
+              <span>מדינות במאגר</span>
+              <strong id="countryCount">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>ראשי לשכה מזוהים</span>
+              <strong id="leadersCount">0</strong>
+            </div>
+            <div class="stat-card">
+              <span>מהלכי שחיקה שתועדו</span>
+              <strong id="actionsCount">0</strong>
             </div>
           </div>
-
-          <div class="hero-panel">
-            <p class="panel-label">עדכון אחרון</p>
-            <h3 id="lastUpdatedLabel">טוען...</h3>
-            <div class="source-box">
-              <span id="sourceBadge" class="source-badge" data-kind="loading">טוען מקור...</span>
-              <p id="sourceHint" class="source-hint">המערכת תציג כאן מאיזה מקור הגיעו הנתונים.</p>
-            </div>
-            <div class="hero-stats">
-              <article class="stat-card">
-                <span>הצעות בסיכון</span>
-                <strong id="activeCount">0</strong>
-              </article>
-              <article class="stat-card">
-                <span>במעקב אישי</span>
-                <strong id="watchlistCount">0</strong>
-              </article>
-              <article class="stat-card">
-                <span>סיכון קיצוני</span>
-                <strong id="criticalCount">0</strong>
-              </article>
-            </div>
-          </div>
-        </section>
+          <p class="panel-footnote">
+            הנתונים הפוליטיים מסוכמים ממקורות כמו Freedom House ו-Human Rights Watch.
+            שמות ראשי הלשכות נשענים בעיקר על אתרים רשמיים; במקום שלא נמצא מקור רשמי
+            נגיש, צוין מקור עיתונאי משפטי עדכני.
+          </p>
+        </div>
       </header>
 
-      <main class="content-grid">
-        <aside class="sidebar">
-          <section class="sidebar-card">
-            <div class="card-header">
-              <p class="section-kicker">סינון וחיפוש</p>
-              <h3>בקרות ניטור</h3>
-            </div>
-
-            <label class="field">
-              <span>חיפוש חופשי</span>
-              <input id="searchInput" type="search" placeholder="שם הצעה, יוזם, מנגנון פגיעה" />
-            </label>
-
-            <label class="field">
-              <span>סטטוס</span>
-              <select id="statusFilter">
-                <option value="all">כל הסטטוסים</option>
-              </select>
-            </label>
-
-            <label class="field">
-              <span>ועדה</span>
-              <select id="committeeFilter">
-                <option value="all">כל הוועדות</option>
-              </select>
-            </label>
-
-            <label class="field">
-              <span>רמת סיכון דמוקרטי</span>
-              <select id="severityFilter">
-                <option value="all">כל הרמות</option>
-                <option value="קיצונית">קיצונית</option>
-                <option value="גבוהה">גבוהה</option>
-                <option value="בינונית">בינונית</option>
-              </select>
-            </label>
-
-            <label class="field">
-              <span>סוג פגיעה</span>
-              <select id="harmFilter">
-                <option value="all">כל סוגי הפגיעה</option>
-              </select>
-            </label>
-
-            <label class="toggle-row">
-              <input id="specialMemberToggle" type="checkbox" />
-              <span>הצג רק הצעות של ח״כ שמחה רוטמן</span>
-            </label>
-
-            <label class="toggle-row">
-              <input id="attorneyGeneralToggle" type="checkbox" />
-              <span>הצג רק ״מעמד היועץ המשפטי לממשלה״</span>
-            </label>
-
-            <label class="toggle-row">
-              <input id="watchlistOnlyToggle" type="checkbox" />
-              <span>הצג רק הצעות במעקב אישי</span>
-            </label>
-          </section>
-
-          <section class="sidebar-card">
-            <div class="card-header">
-              <p class="section-kicker">הזנה ידנית</p>
-              <h3>הוספת הצעת חוק</h3>
-            </div>
-
-            <form id="manualBillForm" class="manual-form">
-              <label class="field">
-                <span>שם ההצעה</span>
-                <input id="manualTitle" name="title" type="text" required placeholder="למשל: הצעת חוק..." />
-              </label>
-
-              <label class="field">
-                <span>הסבר קצר</span>
-                <textarea
-                  id="manualSummary"
-                  name="summary"
-                  rows="3"
-                  required
-                  placeholder="מה ההצעה עושה ולמה היא בעייתית"
-                ></textarea>
-              </label>
-
-              <label class="field">
-                <span>יוזם</span>
-                <input id="manualSponsor" name="sponsor" type="text" placeholder='ח"כ / משרד / הזנה ידנית' />
-              </label>
-
-              <label class="field">
-                <span>ועדה</span>
-                <input id="manualCommittee" name="committee" type="text" placeholder="ועדת החוקה / לא שויך" />
-              </label>
-
-              <label class="field">
-                <span>סטטוס</span>
-                <input id="manualStatus" name="status" type="text" placeholder="קריאה ראשונה / דיון בוועדה" />
-              </label>
-
-              <label class="field">
-                <span>רמת סיכון</span>
-                <select id="manualSeverity" name="severity">
-                  <option value="קיצונית">קיצונית</option>
-                  <option value="גבוהה" selected>גבוהה</option>
-                  <option value="בינונית">בינונית</option>
-                </select>
-              </label>
-
-              <label class="field">
-                <span>מוקד פגיעה</span>
-                <input id="manualHarmArea" name="harmArea" type="text" required placeholder="פגיעה בחופש הביטוי / בעצמאות הרשות השופטת" />
-              </label>
-
-              <label class="field">
-                <span>למה זה פוגע בדמוקרטיה</span>
-                <textarea
-                  id="manualRiskNote"
-                  name="riskNote"
-                  rows="3"
-                  required
-                  placeholder="נימוק קצר שיופיע בכרטיס"
-                ></textarea>
-              </label>
-
-              <label class="field">
-                <span>תגיות</span>
-                <input id="manualTags" name="tags" type="text" placeholder="פסיקים בין תגיות, למשל: משפט, זכויות אדם" />
-              </label>
-
-              <label class="field">
-                <span>קישור להצעת החוק באתר הכנסת</span>
-                <input
-                  id="manualKnessetUrl"
-                  name="knessetUrl"
-                  type="url"
-                  placeholder="https://main.knesset.gov.il/..."
-                />
-              </label>
-
-              <div class="manual-actions">
-                <button class="primary-button manual-submit" type="submit">הוסף לסיכונים</button>
-                <p id="manualFormMessage" class="manual-form-message" aria-live="polite"></p>
-              </div>
-            </form>
-          </section>
-
-          <section class="sidebar-card">
-            <div class="card-header">
-              <p class="section-kicker">תמונת מצב</p>
-              <h3>מדדים מרכזיים</h3>
-            </div>
-            <div id="metricsGrid" class="metrics-grid"></div>
-          </section>
-
-          <section class="sidebar-card">
-            <div class="card-header">
-              <p class="section-kicker">פיד פעילות</p>
-              <h3>שינויים בסיכון</h3>
-            </div>
-            <div id="activityFeed" class="activity-feed"></div>
-          </section>
-        </aside>
-
-        <section class="main-panel">
-          <div class="list-header">
-            <div>
-              <p class="section-kicker">מרכז בקרה דמוקרטי</p>
-              <h3 id="billList">הצעות חוק עם פוטנציאל פגיעה</h3>
-            </div>
-            <p id="resultsSummary" class="results-summary"></p>
+      <main class="main-layout">
+        <aside class="filters-card">
+          <div class="card-heading">
+            <p class="eyebrow">סינון וחיפוש</p>
+            <h3>איפה נתחיל?</h3>
           </div>
 
-          <div id="billGrid" class="bill-grid"></div>
+          <label class="field">
+            <span>חיפוש חופשי</span>
+            <input id="searchInput" type="search" placeholder="מדינה, לשכה, ראש לשכה, פעולה ממשלתית" />
+          </label>
+
+          <label class="field">
+            <span>אזור</span>
+            <select id="regionFilter">
+              <option value="all">כל האזורים</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>רמת חומרה</span>
+            <select id="severityFilter">
+              <option value="all">כל הרמות</option>
+              <option value="גבוהה מאוד">גבוהה מאוד</option>
+              <option value="גבוהה">גבוהה</option>
+            </select>
+          </label>
+
+          <label class="toggle">
+            <input id="officialSourceOnly" type="checkbox" />
+            <span>הצג רק לשכות עם מקור הנהגה רשמי</span>
+          </label>
+
+          <div class="quick-actions">
+            <button id="resetFiltersButton" class="secondary-button" type="button">איפוס סינון</button>
+            <button id="copyGeneralLetterButton" class="primary-button" type="button">העתק נוסח כללי</button>
+          </div>
+
+          <div class="summary-box">
+            <span>תוצאות מוצגות</span>
+            <strong id="resultsCount">0</strong>
+          </div>
+        </aside>
+
+        <section class="content-area">
+          <div class="tabs-bar" role="tablist" aria-label="ניווט בין מאגרים">
+            <button
+              id="barsTabButton"
+              class="tab-button is-active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="barsPanel"
+            >
+              לשכות עורכי דין
+            </button>
+            <button
+              id="orgsTabButton"
+              class="tab-button"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="orgsPanel"
+            >
+              ארגוני עורכי דין ושופטים
+            </button>
+          </div>
+
+          <section id="barsPanel" class="tab-panel is-active" role="tabpanel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">מאגר מדינות</p>
+                <h3>לשכות עורכי דין במדינות עם נסיגה דמוקרטית</h3>
+              </div>
+              <p id="resultsSummary" class="results-summary"></p>
+            </div>
+
+            <div id="countryGrid" class="country-grid"></div>
+          </section>
+
+          <section id="orgsPanel" class="tab-panel" role="tabpanel" hidden>
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">מאגר ארגונים</p>
+                <h3>ארגוני עורכי דין, שופטים ומשפטנים שנאבקו בצעדי שחיקה דמוקרטית</h3>
+              </div>
+              <p class="results-summary">
+                כולל ארגונים מהמדינות שבמאגר וגם פרק ייעודי לפולין, שהפכה לדוגמה מרכזית
+                למאבק משפטי-אזרחי נגד פוליטיזציה של בתי המשפט.
+              </p>
+            </div>
+
+            <div id="orgGrid" class="org-grid"></div>
+          </section>
         </section>
       </main>
     </div>
 
-    <template id="billCardTemplate">
-      <article class="bill-card">
-        <div class="bill-card-top">
-          <div class="bill-meta">
-            <span class="status-pill"></span>
-            <span class="priority-pill"></span>
-            <span class="manual-pill"></span>
-            <span class="focus-pill"></span>
+    <template id="countryCardTemplate">
+      <article class="country-card">
+        <div class="country-card-head">
+          <div>
+            <p class="country-region"></p>
+            <h4 class="country-name"></h4>
+            <p class="country-subtitle"></p>
           </div>
-          <div class="bill-actions">
-            <button class="watch-button" type="button"></button>
-            <button class="share-button" type="button">העתק לינק</button>
-            <button class="remove-button" type="button">הסר</button>
+          <span class="severity-badge"></span>
+        </div>
+
+        <div class="meta-grid">
+          <div class="meta-block">
+            <span>לשכה</span>
+            <strong class="bar-name"></strong>
+          </div>
+          <div class="meta-block">
+            <span>ראש הלשכה</span>
+            <strong class="leader-name"></strong>
+          </div>
+          <div class="meta-block">
+            <span>אימות שם</span>
+            <strong class="verification-note"></strong>
+          </div>
+          <div class="meta-block">
+            <span>ציון Freedom House</span>
+            <strong class="freedom-score"></strong>
           </div>
         </div>
 
-        <h4 class="bill-title"></h4>
-        <p class="bill-summary"></p>
+        <div class="narrative-block">
+          <p class="block-label">מה קורה במדינה</p>
+          <p class="country-summary"></p>
+        </div>
 
-        <dl class="bill-details">
-          <div>
-            <dt>יוזם</dt>
-            <dd class="bill-sponsor"></dd>
-          </div>
-          <div>
-            <dt>ועדה</dt>
-            <dd class="bill-committee"></dd>
-          </div>
-          <div>
-            <dt>עדכון</dt>
-            <dd class="bill-updated"></dd>
-          </div>
-          <div>
-            <dt>שלב הבא</dt>
-            <dd class="bill-next-step"></dd>
-          </div>
-          <div>
-            <dt>מוקד פגיעה</dt>
-            <dd class="bill-harm-area"></dd>
-          </div>
-          <div>
-            <dt>ציון סיכון</dt>
-            <dd class="bill-risk-score"></dd>
-          </div>
-        </dl>
+        <div class="narrative-block">
+          <p class="block-label">צעדי הממשלה לצמצום המשטר הדמוקרטי</p>
+          <ul class="actions-list"></ul>
+        </div>
 
-        <div class="risk-note"></div>
-        <section class="card-section background-materials">
-          <p class="materials-title">חומר רקע</p>
-          <div class="materials-list"></div>
-        </section>
-        <section class="card-section bill-links">
-          <p class="materials-title">קישורים</p>
-          <div class="bill-links-list">
-            <a class="knesset-link" target="_blank" rel="noreferrer noopener"></a>
+        <div class="contact-block">
+          <p class="block-label">פרטי לשכה</p>
+          <div class="contact-list"></div>
+        </div>
+
+        <div class="letter-block">
+          <div class="letter-head">
+            <p class="block-label">פנייה רשמית באנגלית</p>
+            <button class="ghost-button copy-letter-button" type="button">העתק מכתב</button>
           </div>
-        </section>
-        <details class="bill-ops">
-          <summary class="bill-ops-summary">ניהול ידני להצעה</summary>
-          <div class="bill-ops-body">
-            <label class="field compact-field">
-              <span>סטטוס ידני</span>
-              <input class="bill-manual-status" type="text" placeholder="למשל: הכנה לקריאה ראשונה" />
-            </label>
-            <label class="field compact-field">
-              <span>ארגונים אזרחיים פעילים</span>
-              <textarea class="bill-civil-orgs" rows="2" placeholder="למשל: האגודה לזכויות האזרח, קרן..."></textarea>
-            </label>
-            <label class="field compact-field">
-              <span>מנהל משימות</span>
-              <input class="bill-task-manager" type="text" placeholder="שם אחראי / קישור לכלי ניהול" />
-            </label>
-            <div class="bill-ops-actions">
-              <button class="ghost-button bill-ops-save" type="button">שמור נתונים ידניים</button>
-              <p class="bill-ops-message" aria-live="polite"></p>
-            </div>
+          <pre class="letter-text"></pre>
+        </div>
+
+        <div class="sources-block">
+          <p class="block-label">מקורות</p>
+          <div class="sources-list"></div>
+        </div>
+      </article>
+    </template>
+
+    <template id="orgCardTemplate">
+      <article class="org-card">
+        <div class="org-card-head">
+          <div>
+            <p class="country-region org-country"></p>
+            <h4 class="org-name"></h4>
+            <p class="country-subtitle org-type"></p>
           </div>
-        </details>
-        <div class="bill-tags"></div>
+          <span class="severity-badge org-badge"></span>
+        </div>
+
+        <div class="narrative-block">
+          <p class="block-label">מהו הארגון</p>
+          <p class="org-summary"></p>
+        </div>
+
+        <div class="narrative-block">
+          <p class="block-label">איך הוא נאבק בצעדי הממשלה</p>
+          <ul class="org-actions"></ul>
+        </div>
+
+        <div class="contact-block">
+          <p class="block-label">פרטי זיהוי</p>
+          <div class="org-meta-list"></div>
+        </div>
+
+        <div class="sources-block">
+          <p class="block-label">מקורות</p>
+          <div class="org-sources-list"></div>
+        </div>
       </article>
     </template>
 

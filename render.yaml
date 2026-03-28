@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: hakikon
+    name: barbridge-democracy
     runtime: python
     plan: free
     buildCommand: ""
